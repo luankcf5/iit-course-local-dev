@@ -1,0 +1,215 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "windows"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model School {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique
+  name        String
+  description String?
+  logo        String?
+  grades      Grade[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Grade {
+  id          Int       @id @default(autoincrement())
+  label       Int       @unique
+  description String?
+  school      School    @relation(fields: [schoolId], references: [id])
+  schoolId    Int
+  classes     Class[]
+  subjects    Subject[]
+  topics      Topic[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Subject {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String?
+  grades      Grade[]
+  topics      Topic[]
+  transcripts Transcript[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  Calendar    Calendar[]
+}
+
+model Year {
+  id          Int      @id @default(autoincrement())
+  start       DateTime
+  end         DateTime
+  description String?
+  classes     Class[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Class {
+  id          Int          @id @default(autoincrement())
+  name        String
+  year        Year         @relation(fields: [yearId], references: [id])
+  yearId      Int
+  grade       Grade        @relation(fields: [gradeId], references: [id])
+  gradeId     Int
+  students    Student[]
+  transcripts Transcript[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  Calendar    Calendar[]
+}
+
+model Category {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String?
+  topics      Topic[]
+  documents   Document[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Topic {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String?
+  grades      Grade[]
+  subject     Subject    @relation(fields: [subjectId], references: [id])
+  subjectId   Int
+  categories  Category[]
+  documents   Document[]
+  questions   Question[]
+  exams       Exam[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model BookSeries {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String?
+  documents   Document[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Document {
+  id           Int        @id @default(autoincrement())
+  description  String?
+  topic        Topic      @relation(fields: [topicId], references: [id])
+  topicId      Int
+  category     Category   @relation(fields: [categoryId], references: [id])
+  categoryId   Int
+  bookSeries   BookSeries @relation(fields: [bookSeriesId], references: [id])
+  bookSeriesId Int
+  filename     String
+  file         String
+  default      Boolean?   @default(false)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Student {
+  id          Int          @id @default(autoincrement())
+  studentId   String
+  name        String
+  gender      Boolean
+  dob         DateTime
+  class       Class        @relation(fields: [classId], references: [id])
+  classId     Int
+  transcripts Transcript[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Transcript {
+  id        Int      @id @default(autoincrement())
+  student   Student  @relation(fields: [studentId], references: [id])
+  studentId Int
+  class     Class    @relation(fields: [classId], references: [id])
+  classId   Int
+  subject   Subject  @relation(fields: [subjectId], references: [id])
+  subjectId Int
+  t1S1      Float?
+  t1S2      Float?
+  t1S3      Float?
+  t1S4      Float?
+  t1S5      Float?
+  t1Mid     Float?
+  t1Final   Float?
+  t1Overall Float?
+  t2S1      Float?
+  t2S2      Float?
+  t2S3      Float?
+  t2S4      Float?
+  t2S5      Float?
+  t2Mid     Float?
+  t2Final   Float?
+  t2Overall Float?
+  finalp1   Float?
+  finalp2   Float?
+  final     Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Question {
+  id        Int      @id @default(autoincrement())
+  level     Int
+  point     Float
+  topic     Topic    @relation(fields: [topicId], references: [id])
+  topicId   Int
+  content   String
+  answers   Answer[]
+  exam      Exam?    @relation(fields: [examId], references: [id])
+  examId    Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Answer {
+  id         Int       @id @default(autoincrement())
+  content    String
+  correct    Boolean   @default(false)
+  Question   Question? @relation(fields: [questionId], references: [id])
+  questionId Int?
+}
+
+model Exam {
+  id        Int        @id @default(autoincrement())
+  code      String
+  name      String
+  duration  Int
+  type      String
+  topic     Topic      @relation(fields: [topicId], references: [id])
+  topicId   Int
+  questions Question[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Calendar {
+  id          Int      @id @default(autoincrement())
+  color       String
+  title       String
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+  subjectId   Int
+  class       Class    @relation(fields: [classId], references: [id])
+  classId     Int
+  allDay      Boolean
+  description String?
+  end         DateTime
+  start       DateTime
+}
