@@ -18,6 +18,7 @@ import { ExamModule } from './exam/exam.module';
 import { TranscriptModule } from './transcript/transcript.module';
 import { CalendarModule } from './calendar/calendar.module';
 import { AnswerModule } from './answer/answer.module';
+import { SheetModule } from './sheet/sheet.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { AnswerModule } from './answer/answer.module';
     ExamModule,
     TranscriptModule,
     CalendarModule,
+    SheetModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],
