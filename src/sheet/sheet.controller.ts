@@ -9,30 +9,45 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as XLSX from 'xlsx';
 import { SheetService } from './sheet.service';
+import { exec } from 'child_process';
 
 @Controller('sheets')
 export class SheetController {
   constructor(private readonly sheetService: SheetService) {}
 
   @Post('upload')
-  @UseInterceptors(
-    AnyFilesInterceptor({
-      storage: diskStorage({
-        destination: 'ORMChecker/inputs/exam/baithi01',
-        filename: (req, file, cb) => {
-          cb(null, Buffer.from(file.originalname, 'latin1').toString('utf8'));
-        },
-      }),
-    }),
-  )
-  async uploadFile(@UploadedFiles() files: Array<Express.Multer.File>) {
-    return files;
+  runPythonScript() {
+    exec('python ./ORMChecker/main.py', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+      if (stderr) {
+        console.error(`stderr: ${stderr}`);
+      }
+    });
   }
+
+  // @UseInterceptors(
+  //   AnyFilesInterceptor({
+  //     storage: diskStorage({
+  //       destination: 'inputs/exam/baithi01',
+  //       filename: (req, file, cb) => {
+  //         cb(null, Buffer.from(file.originalname, 'latin1').toString('utf8'));
+  //       },
+  //     }),
+  //   }),
+  // )
+
+  // async uploadFile(@UploadedFiles() files: Array<Express.Multer.File>) {
+  //   return files;
+  // }
 
   @Get()
   async getArrayData(): Promise<any[]> {
     const workbook = XLSX.readFile(
-      './ORMChecker/outputs/exam/baithi01/KetQuaKiemTra/Results.csv',
+      './outputs/exam/baithi01/KetQuaKiemTra/Results.csv',
     );
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];

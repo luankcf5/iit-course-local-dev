@@ -12,9 +12,7 @@ async function bootstrap() {
   app.use('/uploads', static_(join(__dirname, '..', 'upload')));
   app.use(
     '/sheet',
-    static_(
-      join(__dirname, '..', 'ORMChecker/outputs/exam/baithi01/HinhAnhKiemTra'),
-    ),
+    static_(join(__dirname, '..', 'outputs/exam/baithi01/HinhAnhKiemTra')),
   );
   app.enableCors();
   app.use(json({ limit: '200mb' }));

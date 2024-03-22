@@ -6,7 +6,7 @@ import { MulterModule } from '@nestjs/platform-express';
 @Module({
   imports: [
     MulterModule.register({
-      dest: 'ORMChecker/inputs/exam/baithi01',
+      dest: 'inputs/exam/baithi01',
     }),
   ],
   controllers: [SheetController],
