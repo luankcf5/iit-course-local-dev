@@ -1,38 +1,27 @@
 const fs = require('fs');
 const dotenv = require('dotenv');
-const { spawn } = require('child_process');
 
 dotenv.config();
 
-console.log('Đường dẫn tuyệt đối hiện tại:', process.cwd());
+const toUnixPath = (path) =>
+  path.replace(/[\\/]+/g, '/').replace(/^([a-zA-Z]+:|\.\/)/, '');
+
+let DATABASE_URL;
+if (process.platform == 'win32') {
+  DATABASE_URL = `file:${toUnixPath(process.cwd())}/${process.env.DB}`;
+} else {
+  DATABASE_URL = `file:${process.cwd()}/${process.env.DB}`;
+}
+console.log(DATABASE_URL);
 
 const content = `
+DEBUG=${process.env.DEBUG}
 PORT=${process.env.PORT}
 DB=${process.env.DB}
 EXEC=${process.env.EXEC}
 
 # Make by system
-DATABASE_URL="file:${process.cwd()}/${process.env.DB}"
+DATABASE_URL="${DATABASE_URL}"
 `;
 
-fs.writeFile('.env', content, (err) => {
-  if (err) {
-    console.log(err);
-    console.log('Lỗi khi đọc file');
-    return;
-  }
-
-  const bat = spawn(`${process.env.EXEC}`, { shell: true });
-
-  bat.stdout.on('data', (data) => {
-    console.log(`${data}`);
-  });
-
-  bat.stderr.on('data', (data) => {
-    console.log(`stderr: ${data}`);
-  });
-
-  bat.on('close', (code) => {
-    console.log(`Child process exited with code ${code}`);
-  });
-});
+fs.promises.writeFile('.env', content);
