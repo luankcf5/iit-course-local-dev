@@ -33,6 +33,7 @@
     "python-shell": "^5.0.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
+    "simple-scorm-packager": "^0.2.7",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
@@ -82,7 +83,7 @@
   "pkg": {
     "outputPath": "release",
     "assets": [
-      "node_modules/.prisma/client/*","outputs/exam/baithi01/HinhAnhKiemTra/**/*"
+      "node_modules/.prisma/client/*"
     ],
     "targets": [
       "node16-win-x64",

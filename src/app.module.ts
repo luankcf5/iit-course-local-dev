@@ -19,6 +19,7 @@ import { TranscriptModule } from './transcript/transcript.module';
 import { CalendarModule } from './calendar/calendar.module';
 import { AnswerModule } from './answer/answer.module';
 import { SheetModule } from './sheet/sheet.module';
+import { ScormModule } from './scorm/scorm.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { SheetModule } from './sheet/sheet.module';
     TranscriptModule,
     CalendarModule,
     SheetModule,
+    ScormModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],
